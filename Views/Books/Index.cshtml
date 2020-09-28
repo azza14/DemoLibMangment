@@ -1,0 +1,115 @@
+﻿
+@model IEnumerable<Lib_Mangement.Models.Book>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<h2>List of Books</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-default" })
+</p>
+<div>
+    <table class="table  table-hover table-striped table-bordered ">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+
+            <th>
+                @Html.DisplayNameFor(model => model.Author_Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Publisher)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OriginalCopies)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AvailableNumber)
+            </th>
+
+            <th>Action</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr id="#row_@item.Id">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Code)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author_Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Publisher)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OriginalCopies)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AvailableNumber)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }, htmlAttributes: new { @class = "btn btn-primary " })|
+                    @*<a class="btn btn-danger" href="#" onclick="ConfirmDelete(@item.Id)">Delete</a>*@
+                    <a  class="btn btn-danger" data-toggle="modal" data-target="#myModal">Delete</a>
+
+
+                </td>
+            </tr>
+        }
+    </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="myModalLabel">Delete Book</h3>
+                </div>
+                <div class="modal-body">
+                    <h3 class="text-danger">
+                        Are You Sure to want to delete this book?
+                    </h3>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-secondary" data-dismiss="modal">Cancel</a>
+                    <a  onclick="Deletebook()" class="btn btn-primary">Confirm</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input  type="hidden" id="hiddenBookId"/>
+</div>
+<script>
+    var ConfirmDelete = function (BookId) {
+        $("#hiddenBookId").val(BookId);
+        $("myModal").modal('show');
+    }
+
+    var Deletebook = function () {
+        var id = $("hiddenBookId").val();
+        $.ajax({
+            type: "POST",
+            url: "/Books/DeleteBook/"+ id,
+            data: { BookId: id },
+            success: function (result) {
+                $("#myModal").modal("hide");
+                $("#row_" + id).remove();
+            }
+
+
+        });
+         
+    }
+</script>

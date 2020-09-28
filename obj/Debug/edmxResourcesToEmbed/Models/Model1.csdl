@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="LibararyDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Book">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Author_Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Publisher" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="AvailableNumber" Type="Int32" Nullable="false" />
+    <Property Name="OriginalCopies" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="BorrowHistories" Relationship="Self.FK_Borrowing_Books" FromRole="Books" ToRole="BorrowHistory" />
+  </EntityType>
+  <EntityType Name="BorrowHistory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="BookId" Type="Int32" Nullable="false" />
+    <Property Name="StudentId" Type="Int32" Nullable="false" />
+    <Property Name="BorrowDate" Type="DateTime" Nullable="false" Precision="3" />
+    <NavigationProperty Name="Book" Relationship="Self.FK_Borrowing_Books" FromRole="BorrowHistory" ToRole="Books" />
+    <NavigationProperty Name="Student" Relationship="Self.FK_Borrowing_Students" FromRole="BorrowHistory" ToRole="Students" />
+  </EntityType>
+  <EntityType Name="Student">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="FirstName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="LastName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="BorrowHistories" Relationship="Self.FK_Borrowing_Students" FromRole="Students" ToRole="BorrowHistory" />
+  </EntityType>
+  <Association Name="FK_Borrowing_Books">
+    <End Role="Books" Type="Self.Book" Multiplicity="1" />
+    <End Role="BorrowHistory" Type="Self.BorrowHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Books">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BorrowHistory">
+        <PropertyRef Name="BookId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Borrowing_Students">
+    <End Role="Students" Type="Self.Student" Multiplicity="1" />
+    <End Role="BorrowHistory" Type="Self.BorrowHistory" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Students">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="BorrowHistory">
+        <PropertyRef Name="StudentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="LibraryDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Books" EntityType="Self.Book" />
+    <EntitySet Name="BorrowHistories" EntityType="Self.BorrowHistory" />
+    <EntitySet Name="Students" EntityType="Self.Student" />
+    <AssociationSet Name="FK_Borrowing_Books" Association="Self.FK_Borrowing_Books">
+      <End Role="Books" EntitySet="Books" />
+      <End Role="BorrowHistory" EntitySet="BorrowHistories" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Borrowing_Students" Association="Self.FK_Borrowing_Students">
+      <End Role="Students" EntitySet="Students" />
+      <End Role="BorrowHistory" EntitySet="BorrowHistories" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
